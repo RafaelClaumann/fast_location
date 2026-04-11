@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../shared/components/address_card.dart';
 import '../../../shared/models/address_model.dart';
+import '../repositories/address_repository.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -11,24 +12,31 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   final _cepController = TextEditingController();
+  final _repository = AddressRepository();
   final List<AddressModel> _recentAddresses = [
     AddressModel(cep: '01001-000', address: 'Praça da Sé, Sé, São Paulo - SP'),
     AddressModel(cep: '20040-002', address: 'Avenida Rio Branco, Centro, Rio de Janeiro - RJ'),
   ];
 
-  void _searchCep() {
+  void _searchCep() async {
     final cep = _cepController.text;
+
     if (cep.isNotEmpty) {
-      // Simulação de busca
+      // Criamos o objeto manualmente com os dados que você quer
+      final novoEndereco = AddressModel(
+        cep: cep,
+        address: 'Endereço manual para o CEP $cep',
+      );
+
+      // ARMAZENAMENTO MANUAL NO HIVE
+      await _repository.saveAddress(novoEndereco);
+
+      // Por enquanto, mantemos o setState apenas para você ver algo
+      // acontecendo na tela enquanto testa, mas o dado JÁ ESTÁ no disco.
       setState(() {
-        _recentAddresses.insert(
-          0,
-          AddressModel(
-            cep: cep,
-            address: 'Rua Simulada para o CEP $cep, Bairro, Cidade - UF',
-          ),
-        );
+        _recentAddresses.insert(0, novoEndereco);
       });
+
       _cepController.clear();
     }
   }

@@ -14,6 +14,7 @@ class AddressRepository {
   Future<void> saveAddress(AddressModel address) async {
     final box = await _openBox();
     await box.add(address); // Adiciona com auto-incremento
+    print('Endereço ${address.cep} salvo com sucesso no Hive!');
   }
 
   // Buscar todos os endereços
