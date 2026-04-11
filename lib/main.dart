@@ -1,8 +1,19 @@
+import 'package:fast_location/src/shared/models/address_model.dart';
 import 'package:flutter/material.dart';
-import 'src/modules/home/page/home_page.dart';
-import 'src/modules/history/page/history_page.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 
-void main() {
+import 'src/modules/history/page/history_page.dart';
+import 'src/modules/home/page/home_page.dart';
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  // Inicializa o Hive
+  await Hive.initFlutter();
+
+  // Registra o adaptador que o build_runner gerou
+  Hive.registerAdapter(AddressModelAdapter());
+
   runApp(const MyApp());
 }
 
