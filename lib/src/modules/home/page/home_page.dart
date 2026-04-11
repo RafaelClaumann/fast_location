@@ -2,7 +2,6 @@ import 'package:fast_location/src/shared/controllers/address_controller.dart';
 import 'package:flutter/material.dart';
 
 import '../../../shared/components/address_card.dart';
-import '../../../shared/models/address_model.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
