@@ -1,8 +1,11 @@
 import 'package:hive/hive.dart';
+import 'package:logger/logger.dart';
+
 import '../../../shared/models/address_model.dart';
 
-class AddressRepository {
+var logger = Logger();
 
+class AddressRepository {
   static const String _boxName = 'addresses';
 
   // Abre a caixa (tabela) do Hive
@@ -14,7 +17,9 @@ class AddressRepository {
   Future<void> saveAddress(AddressModel address) async {
     final box = await _openBox();
     await box.add(address); // Adiciona com auto-incremento
-    print('Endereço ${address.cep} salvo com sucesso no Hive!');
+
+    // Isso aparecerá com cores e ícones no console de debug
+    logger.i('Endereço ${address.cep} salvo no Hive!');
   }
 
   // Buscar todos os endereços
@@ -28,5 +33,4 @@ class AddressRepository {
     final box = await _openBox();
     await box.deleteAt(index);
   }
-
 }
