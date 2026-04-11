@@ -1,5 +1,5 @@
 import 'package:hive/hive.dart';
-import '../models/address_model.dart';
+import '../../../shared/models/address_model.dart';
 
 class AddressRepository {
 
