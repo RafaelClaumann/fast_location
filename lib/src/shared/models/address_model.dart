@@ -4,7 +4,6 @@ part 'address_model.g.dart'; // Necessário para o gerador de código
 
 @HiveType(typeId: 0)
 class AddressModel extends HiveObject {
-
   @HiveField(0)
   final String cep;
 
@@ -12,5 +11,4 @@ class AddressModel extends HiveObject {
   final String address;
 
   AddressModel({required this.cep, required this.address});
-
 }
