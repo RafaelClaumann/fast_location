@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
-import '../../../shared/models/address_model.dart';
+import 'package:provider/provider.dart';
+
 import '../../../shared/components/address_card.dart';
+import '../../../shared/controllers/address_controller.dart';
 
 class HistoryPage extends StatefulWidget {
   const HistoryPage({super.key});
@@ -10,14 +12,11 @@ class HistoryPage extends StatefulWidget {
 }
 
 class _HistoryPageState extends State<HistoryPage> {
-  // Lista fictícia para a página estática
-  final List<AddressModel> _history = [
-    AddressModel(cep: '01001-000', address: 'Praça da Sé, Sé, São Paulo - SP'),
-    AddressModel(cep: '20040-002', address: 'Avenida Rio Branco, Centro, Rio de Janeiro - RJ'),
-  ];
-
   @override
   Widget build(BuildContext context) {
+    // Escuta o mesmo controller do main
+    var addressController = context.watch<AddressController>();
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Histórico de Buscas'),
@@ -26,13 +25,15 @@ class _HistoryPageState extends State<HistoryPage> {
           onPressed: () => Navigator.pop(context),
         ),
       ),
-      body: _history.isEmpty
+      body: addressController.addresses.isEmpty
           ? const Center(child: Text('Nenhum histórico encontrado.'))
           : ListView.builder(
-              itemCount: _history.length,
+              itemCount: addressController.addresses.length,
               itemBuilder: (context, index) {
+                final address = addressController.addresses[index];
                 return AddressCard(
-                  address: _history[index],
+                  address: address,
+                  onDelete: () => addressController.deleteAddress(address),
                 );
               },
             ),
