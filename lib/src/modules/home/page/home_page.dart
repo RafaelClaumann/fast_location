@@ -15,6 +15,8 @@ class _HomePageState extends State<HomePage> {
   final _cepController = TextEditingController();
 
   void _searchCep() async {
+    FocusScope.of(context).unfocus();
+
     final cep = _cepController.text.isNotEmpty;
     if (cep) {
       context.read<AddressController>().addAddress(_cepController.text);
@@ -48,6 +50,7 @@ class _HomePageState extends State<HomePage> {
                       border: OutlineInputBorder(),
                     ),
                     keyboardType: TextInputType.number,
+                    onSubmitted: (_) => _searchCep(),
                   ),
                 ),
                 const SizedBox(width: 8),
