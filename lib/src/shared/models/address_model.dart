@@ -11,4 +11,9 @@ class AddressModel extends HiveObject {
   final String address;
 
   AddressModel({required this.cep, required this.address});
+
+  @override
+  String toString() {
+    return 'AddressModel(cep: $cep, address: $address)';
+  }
 }
