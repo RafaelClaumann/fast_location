@@ -2,7 +2,7 @@ import 'package:fast_location/src/shared/controllers/address_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../../../shared/components/address_card.dart';
+import '../../../shared/components/address_list_view.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -24,9 +24,6 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    // Usamos .watch para ESCUTAR mudanças na lista e reconstruir a tela
-    final addressController = context.watch<AddressController>();
-
     return Scaffold(
       appBar: AppBar(
         title: const Text('Fast Location'),
@@ -69,25 +66,7 @@ class _HomePageState extends State<HomePage> {
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
           ),
-          Expanded(
-            // 1. Verificamos se a lista no controller está vazia
-            child: addressController.addresses.isEmpty
-                ? const Center(child: Text('Nenhuma busca recente.'))
-                : ListView.builder(
-                    // 2. Usamos a lista que vem do controller
-                    itemCount: addressController.addresses.length,
-                    itemBuilder: (context, index) {
-                      final address = addressController.addresses[index];
-                      return AddressCard(
-                        address: address,
-                        onDelete: () async {
-                          // 3. Chamamos a deleção diretamente no controller
-                          await addressController.deleteAddress(address);
-                        },
-                      );
-                    },
-                  ),
-          ),
+          Expanded(child: AddressListView()),
         ],
       ),
     );
