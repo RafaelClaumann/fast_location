@@ -66,7 +66,7 @@ class _HomePageState extends State<HomePage> {
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
           ),
-          Expanded(child: AddressListView()),
+          Expanded(child: AddressListView(limit: 3)),
         ],
       ),
     );
