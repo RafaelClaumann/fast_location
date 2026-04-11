@@ -1,8 +1,8 @@
+import 'package:fast_location/src/shared/controllers/address_controller.dart';
 import 'package:flutter/material.dart';
 
 import '../../../shared/components/address_card.dart';
 import '../../../shared/models/address_model.dart';
-import '../repositories/address_repository.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -12,54 +12,21 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  final _addressController = AddressController();
   final _cepController = TextEditingController();
-  final _repository = AddressRepository();
-
-  final List<AddressModel> _staticAddresses = [
-    AddressModel(cep: '01001-000', address: 'Praça da Sé, Sé, São Paulo - SP'),
-    AddressModel(
-      cep: '20040-002',
-      address: 'Avenida Rio Branco, Centro, Rio de Janeiro - RJ',
-    ),
-  ];
-
-  List<AddressModel> _recentAddresses = [];
 
   @override
   void initState() {
     super.initState();
-    _recentAddresses = List.from(_staticAddresses);
-    _loadFromHive();
-  }
-
-  Future<void> _loadFromHive() async {
-    final hiveAddresses = await _repository.getAllAddresses();
-
-    setState(() {
-      // Concatenamos: Estáticos + Hive (invertido para os novos aparecerem primeiro)
-      _recentAddresses = [..._staticAddresses, ...hiveAddresses.reversed];
-    });
+    // Escuta as mudanças no controller e redesenha a tela
+    _addressController.addListener(() => setState(() {}));
+    _addressController.loadAddresses();
   }
 
   void _searchCep() async {
-    final cep = _cepController.text;
-
-    if (cep.isNotEmpty) {
-      // Criamos o objeto manualmente com os dados que você quer
-      final novoEndereco = AddressModel(
-        cep: cep,
-        address: 'Endereço manual para o CEP $cep',
-      );
-
-      // ARMAZENAMENTO MANUAL NO HIVE
-      await _repository.saveAddress(novoEndereco);
-
-      // Por enquanto, mantemos o setState apenas para você ver algo
-      // acontecendo na tela enquanto testa, mas o dado JÁ ESTÁ no disco.
-      setState(() {
-        _recentAddresses.insert(0, novoEndereco);
-      });
-
+    final cep = _cepController.text.isNotEmpty;
+    if (cep) {
+      _addressController.addAddress(_cepController.text);
       _cepController.clear();
     }
   }
@@ -109,19 +76,19 @@ class _HomePageState extends State<HomePage> {
             ),
           ),
           Expanded(
-            child: _recentAddresses.isEmpty
+            // 1. Verificamos se a lista no controller está vazia
+            child: _addressController.addresses.isEmpty
                 ? const Center(child: Text('Nenhuma busca recente.'))
                 : ListView.builder(
-                    itemCount: _recentAddresses.length,
+                    // 2. Usamos a lista que vem do controller
+                    itemCount: _addressController.addresses.length,
                     itemBuilder: (context, index) {
+                      final address = _addressController.addresses[index];
                       return AddressCard(
-                        address: _recentAddresses[index],
+                        address: address,
                         onDelete: () async {
-                          await _repository.deleteAddress(
-                            _recentAddresses[index],
-                          );
-
-                          await _loadFromHive();
+                          // 3. Chamamos a deleção diretamente no controller
+                          await _addressController.deleteAddress(address);
                         },
                       );
                     },
