@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import '../../../shared/components/address_card.dart';
 import '../../../shared/models/address_model.dart';
 import '../repositories/address_repository.dart';
@@ -13,10 +14,32 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   final _cepController = TextEditingController();
   final _repository = AddressRepository();
-  final List<AddressModel> _recentAddresses = [
+
+  final List<AddressModel> _staticAddresses = [
     AddressModel(cep: '01001-000', address: 'Praça da Sé, Sé, São Paulo - SP'),
-    AddressModel(cep: '20040-002', address: 'Avenida Rio Branco, Centro, Rio de Janeiro - RJ'),
+    AddressModel(
+      cep: '20040-002',
+      address: 'Avenida Rio Branco, Centro, Rio de Janeiro - RJ',
+    ),
   ];
+
+  List<AddressModel> _recentAddresses = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _recentAddresses = List.from(_staticAddresses);
+    _loadFromHive();
+  }
+
+  Future<void> _loadFromHive() async {
+    final hiveAddresses = await _repository.getAllAddresses();
+
+    setState(() {
+      // Concatenamos: Estáticos + Hive (invertido para os novos aparecerem primeiro)
+      _recentAddresses = [..._staticAddresses, ...hiveAddresses.reversed];
+    });
+  }
 
   void _searchCep() async {
     final cep = _cepController.text;
@@ -93,10 +116,12 @@ class _HomePageState extends State<HomePage> {
                     itemBuilder: (context, index) {
                       return AddressCard(
                         address: _recentAddresses[index],
-                        onDelete: () {
-                          setState(() {
-                            _recentAddresses.removeAt(index);
-                          });
+                        onDelete: () async {
+                          await _repository.deleteAddress(
+                            _recentAddresses[index],
+                          );
+
+                          await _loadFromHive();
                         },
                       );
                     },

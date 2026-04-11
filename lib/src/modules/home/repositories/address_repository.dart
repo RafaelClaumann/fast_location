@@ -29,8 +29,21 @@ class AddressRepository {
   }
 
   // Deletar um endereço (opcional)
-  Future<void> deleteAddress(int index) async {
+  Future<void> deleteAddressByIndex(int index) async {
     final box = await _openBox();
     await box.deleteAt(index);
+  }
+
+  // Deletar um endereço (opcional)
+  Future<void> deleteAddress(AddressModel address) async {
+    await address.delete();
+    logger.i('Endereço ${address.cep} excluído do Hive!');
+  }
+
+  // Limpar a base de dados completa
+  Future<void> clearAll() async {
+    final box = await _openBox();
+    await box.clear();
+    logger.w('Banco de dados Hive limpo com sucesso!');
   }
 }
