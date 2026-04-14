@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../modules/home/services/map_launcher_service.dart';
 import '../controllers/address_controller.dart';
 import 'address_card.dart';
 
 class AddressListView extends StatelessWidget {
   final int? limit; // Parâmetro opcional para limitar a quantidade
+  final MapLauncherService _mapLauncherService = MapLauncherService();
 
-  const AddressListView({super.key, this.limit});
+  AddressListView({super.key, this.limit});
 
   @override
   Widget build(BuildContext context) {
@@ -35,6 +37,8 @@ class AddressListView extends StatelessWidget {
         final address = displayAddresses[index];
         return AddressCard(
           address: address,
+          onTap: () =>
+              _mapLauncherService.openMapPicker(context, address.address),
           onDelete: () => controller.deleteAddress(address),
         );
       },
