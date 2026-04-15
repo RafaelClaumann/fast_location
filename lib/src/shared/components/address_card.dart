@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
+
 import '../models/address_model.dart';
 
 class AddressCard extends StatelessWidget {
   final AddressModel address;
+  final VoidCallback? onTap;
   final VoidCallback? onDelete;
 
   const AddressCard({
     super.key,
     required this.address,
+    this.onTap,
     this.onDelete,
   });
 
@@ -19,6 +22,7 @@ class AddressCard extends StatelessWidget {
         leading: const Icon(Icons.location_on, color: Colors.blue),
         title: Text(address.cep),
         subtitle: Text(address.address),
+        onTap: onTap,
         trailing: onDelete != null
             ? IconButton(
                 icon: const Icon(Icons.delete, color: Colors.red),

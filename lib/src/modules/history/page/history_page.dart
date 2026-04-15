@@ -20,7 +20,7 @@ class _HistoryPageState extends State<HistoryPage> {
           onPressed: () => Navigator.pop(context),
         ),
       ),
-      body: const Padding(
+      body: Padding(
         padding: EdgeInsets.all(8.0),
         child: AddressListView(), // REUTILIZAÇÃO TOTAL!
       ),
